@@ -23,13 +23,13 @@ describe('yo como usuario quiero visualizar los datos del clima de la fecha para
   test('el primer dato a visualizar en la aplicacion  debe ser el nombre de la ciudad: Quilmes ', async () => {
     const resultado= renderHook(()=> usarLocalizacion());
     expect(resultado.result.current.coordenadas()).toEqual({
-        latitude:0,
-        longitude:0,
+        latitud:0,
+        longitud:0,
     });
     await waitFor(()=>{
         expect(resultado.result.current.coordenadas()).toEqual({
-            latitude:10,
-            longitude:20,
+            latitud:10,
+            longitud:20,
         });
     });
   });
