@@ -19,12 +19,13 @@ export const usarPronosticoClimatico = ({
       longitud.toPrecision(2),
     ],
         queryFn: async () => {
+          const clave_de_api= 'a97cc5da0f164cca9b0213528262803'
       const resultado = await fetch(
         `http://api.weatherapi.com/v1/current.json?key=${clave_de_api}&q=${latitud},${longitud}`
       );
 
       const resultadoForecast = await fetch(
-        `http://api.weatherapi.com/v1/forecast.json?key=${clave_de_api}&q=${latitud},${longitud}&days=1`
+         `http://api.weatherapi.com/v1/forecast.json?key=${clave_de_api}&q=${latitud},${longitud}&${fecha}=1&aqi=no&alerts=no`
       );
 
       const currentData = await resultado.json();
