@@ -18,7 +18,7 @@ const PantallaInicialParaElClima = () => {
             fecha={fechas().hoy}
             latitud={coordenadas().latitud}
             longitud={coordenadas().longitud}
-            clave_de_api={process.env.EXPO_PUBLIC_API_KEY as string}
+            clave_de_api="tukey"
           />
         )}
       </View>
@@ -37,9 +37,25 @@ const TarjetaParaDatosClimaticos = (props: Parameters<typeof usarPronosticoClima
     consultaExitosa,
     temperaturaMinimaEnGradoCelsius,
     temperaturaMaximaEnGradoCelsius,
+    estaPendiente,
+    huboUnProblema,
   } = usarPronosticoClimatico(props);
 
-  if (!consultaExitosa()) return null;
+  if (estaPendiente())
+    return (
+      <View>
+        <Text>Cargando</Text>
+      </View>
+    );
+
+  if (huboUnProblema())
+    return (
+      <View>
+        <Text>Upss</Text>
+      </View>
+    );
+
+  console.log(ciudad());
 
   const obtenerIcono = () => {
     const condicion = condicionClimatica().toLowerCase();
@@ -56,6 +72,7 @@ const TarjetaParaDatosClimaticos = (props: Parameters<typeof usarPronosticoClima
 
     return require('@/imagenes/nublado.png');
   };
+  console.log(humedadEnPorcentaje());
 
   return (
     <View className="flex-1 items-center justify-center px-6">

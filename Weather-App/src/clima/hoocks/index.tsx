@@ -14,8 +14,6 @@ export const usarPronosticoClimatico = ({
   const { isPending, isFetched, isError, error, data } = useQuery({
     queryKey: [fecha.getDate(), fecha.getHours(), latitud.toPrecision(2), longitud.toPrecision(2)],
     queryFn: async () => {
-      const clave_de_api = 'tu key';
-
       // http://api.weatherapi.com/v1/history.json?key=key&q=London&dt=2026-04-28
       const resultadoHistorico = await fetch(
         `http://api.weatherapi.com/v1/history.json?key=${clave_de_api}&q=${latitud},${longitud}&dt${fecha}`
@@ -43,14 +41,12 @@ export const usarPronosticoClimatico = ({
     estaPendiente: () => isPending,
     huboUnProblema: () => isError,
     consultaExitosa: () => isFetched,
-
     ciudad: () => data?.ubicacion?.name ?? '',
-
-    condicionClimatica: () => (isFetched ? data?.actuales?.current?.condition?.text : ''),
+    condicionClimatica: () => (isFetched ? `${data?.actuales?.current?.condition?.text}` : ''),
     humedadEnPorcentaje: () => (isFetched ? data?.actuales?.current?.humidity : 0),
     presionEnHectopascales: () => (isFetched ? data?.actuales?.current?.pressure_mb : 0),
-    velocidadDeVientoEnKilometroPorhora: () => (isFetched ? data?.actuales?.current.wind_kph : 0),
-    temperaturaEnGradoCelsius: () => (isFetched ? data?.actuales?.current.temp_c : 0),
+    velocidadDeVientoEnKilometroPorhora: () => (isFetched ? data?.actuales?.current?.wind_kph : 0),
+    temperaturaEnGradoCelsius: () => (isFetched ? data?.actuales?.current?.temp_c : 0),
     temperaturaMaximaEnGradoCelsius: () =>
       isFetched ? data?.actuales?.forecast.forecastday[0].day.maxtemp_c : 0,
     temperaturaMinimaEnGradoCelsius: () =>

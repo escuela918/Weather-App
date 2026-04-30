@@ -16,12 +16,9 @@ export const usarLocalizacion = () => {
         return;
       }
       const localizacion = await getCurrentPositionAsync({});
-      console.log(localizacion);
       cambiarCoordenadas({
-        // latitud: localizacion.coords.latitude,
-        // longitud: localizacion.coords.longitude,
-        latitud: 34.6798243,
-        longitud: -58.4511093,
+        latitud: localizacion.coords.latitude,
+        longitud: localizacion.coords.longitude,
       });
       cambiarestadoDeLosPermisos({ habilitado: true });
     }
@@ -31,8 +28,6 @@ export const usarLocalizacion = () => {
       console.log('hubo un problema pero tiro datos por defecto');
 
       cambiarCoordenadas({
-        // latitud: localizacion.coords.latitude,
-        // longitud: localizacion.coords.longitude,
         latitud: 34.6798243,
         longitud: -58.4511093,
       });
@@ -47,4 +42,3 @@ export const usarLocalizacion = () => {
 };
 
 export default usarLocalizacion;
-
