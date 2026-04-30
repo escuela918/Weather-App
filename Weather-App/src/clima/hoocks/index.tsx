@@ -12,69 +12,51 @@ export const usarPronosticoClimatico = ({
   clave_de_api: string;
 }) => {
   const { isPending, isFetched, isError, error, data } = useQuery({
-    queryKey: [
-      fecha.getDate(),
-      fecha.getHours(),
-      latitud.toPrecision(2),
-      longitud.toPrecision(2),
-    ],
-        queryFn: async () => {
-          const clave_de_api= 'a97cc5da0f164cca9b0213528262803'
-      const resultado = await fetch(
-        `http://api.weatherapi.com/v1/current.json?key=${clave_de_api}&q=${latitud},${longitud}`
+    queryKey: [fecha.getDate(), fecha.getHours(), latitud.toPrecision(2), longitud.toPrecision(2)],
+    queryFn: async () => {
+      const clave_de_api = 'tu key';
+
+      // http://api.weatherapi.com/v1/history.json?key=key&q=London&dt=2026-04-28
+      const resultadoHistorico = await fetch(
+        `http://api.weatherapi.com/v1/history.json?key=${clave_de_api}&q=${latitud},${longitud}&dt${fecha}`
       );
 
-      const resultadoForecast = await fetch(
-         `http://api.weatherapi.com/v1/forecast.json?key=${clave_de_api}&q=${latitud},${longitud}&${fecha}=1&aqi=no&alerts=no`
+      // http://api.weatherapi.com/v1/forecast.json?key=key&q=London&days=1&aqi=no&alerts=no
+      const resultadoActual = await fetch(
+        `http://api.weatherapi.com/v1/forecast.json?key=${clave_de_api}&q=${latitud},${longitud}&days=1&aqi=no&alerts=no`
       );
 
-      const currentData = await resultado.json();
-      const forecastData = await resultadoForecast.json();
+      const datosHistoricos = await resultadoHistorico.json();
+      const datosActuales = await resultadoActual.json();
+
+      console.table(datosActuales);
 
       return {
-        current: currentData,
-        forecast: forecastData,
-        location: currentData.location,
+        historicos: datosHistoricos,
+        actuales: datosActuales,
+        ubicacion: datosActuales.location,
       };
     },
   });
 
   return {
-    estaPendiente: () =>isPending,
+    estaPendiente: () => isPending,
     huboUnProblema: () => isError,
-    consultaExitosa: () =>isFetched,
+    consultaExitosa: () => isFetched,
 
-    ciudad: () => ( data?.location?.name ?? ''),
+    ciudad: () => data?.ubicacion?.name ?? '',
 
-    condicionClimatica:()=> (isFetched ? data?.current?.condition?.text : ''),
-    humedadEnPorcentaje: () => (isFetched ? data?.current?.humidity : 0),
-    presionEnHectopascales: () => (isFetched ? data?.current?.pressure_mb : 0),
-    velocidadDeVientoEnKilometroPorhora:()=> (isFetched ? data?.current?.wind_kph : 0),
-    temperaturaEnGradoCelsius: ()=> (isFetched ? data?.current?.temp_c : 0),
-    temperaturaMaximaEnGradoCelsius: ()=> (isFetched ? data?.forecast?.maxtemp_c : 0),
-    temperaturaMinimaEnGradoCelsius: ()=> (isFetched ? data?.forecast?.mintemp_c : 0),
- 
-
-    descripcionDelProblema: ()=> (isError ? (error as Error)?.message : ''),
-
-    pronostico: isFetched
-      ? {
-          condicion_climatica: data?.current?.condition?.text,
-          humedad_en_porcentaje: data?.current?.humidity,
-          presion_en_hectopascales: data?.current?.pressure_mb,
-          velocidad_del_viento_en_kilometros_por_hora:
-            data?.current?.wind_kph,
-          temperatura_en_grados_celsius: data?.current?.temp_c,
-          temperaturaMaximaEnGradoCelsius: () =>
-            isFetched ? data?.forecast?.forecastday?.[0]?.day?.maxtemp_c ?? 0 : 0,
-
-          temperaturaMinimaEnGradoCelsius: () =>
-            isFetched ? data?.forecast?.forecastday?.[0]?.day?.mintemp_c ?? 0 : 0,
-          
-           
-        }
-      : null,
+    condicionClimatica: () => (isFetched ? data?.actuales?.current?.condition?.text : ''),
+    humedadEnPorcentaje: () => (isFetched ? data?.actuales?.current?.humidity : 0),
+    presionEnHectopascales: () => (isFetched ? data?.actuales?.current?.pressure_mb : 0),
+    velocidadDeVientoEnKilometroPorhora: () => (isFetched ? data?.actuales?.current.wind_kph : 0),
+    temperaturaEnGradoCelsius: () => (isFetched ? data?.actuales?.current.temp_c : 0),
+    temperaturaMaximaEnGradoCelsius: () =>
+      isFetched ? data?.actuales?.forecast.forecastday[0].day.maxtemp_c : 0,
+    temperaturaMinimaEnGradoCelsius: () =>
+      isFetched ? data?.actuales?.forecast.forecastday[0].day.mintemp_c : 0,
+    descripcionDelProblema: () => (isError ? (error as Error)?.message : ''),
   };
-};  
+};
 
 export default usarPronosticoClimatico;
