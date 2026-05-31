@@ -4,57 +4,43 @@ import { renderHook, waitFor } from '@testing-library/react-native';
 
 globalThis.fetch = jest.fn(() =>
   Promise.resolve({
+    ok: true,
     json: () =>
       Promise.resolve({
-        location:{
-          name:'Quilmes',
-          region: 'Ile-de-France',
-          country: 'France',
-          lat: 48.8667,
-          lon:2.3333,
-          tz_id: 'Europe/Paris',
-          localtime_epoch: 1759287395,
-          localtime:'2025-10-01 04:56',
+        location: {
+          name: "Quilmes",
+          region: "Ile-de-France",
+          country: "France",
         },
-        current:{
-          last_updated_epoch: 1759287395,
-          last_updated:'2025-10-01 04:45',
-          temp_c:9.2,
-          temp_f: 48.6,
-          is_day: 0,
-          condition: {
-            text: 'clear',
-            icon: '//cdn.weatherapi.com/weather/64x64/night/113.png',
-            code: 1000,
-          },
-          wind_mph: 3.8,
-          wind_khp: 6.1,
-          wind_degree: 21,
-          wind_dir:'NNE',
-          pressure_mb: 1027.0,
-          pressure_in: 30.33,
-          precip_mm: 0.0,
-          precip_in: 0.0,
+        current: {
+          temp_c: 9.2,
           humidity: 93,
-          cloud:0,
-          feelslike_c:8.5,
-          feelslike_f: 47.3,
-          windchill_c:11.1,
-          windchill_f:52.0,
-          heatindex_c:11.5,
-          heatindex_f:52.6,
-          dewpoint_c:6.2,
-          dewpoint_f:43.1,
-          vis_km: 10.0,
-          vis_miles: 6.0,
-          uv:0.0,
-          gust_mph:6.9,
-          gust_kph:11.1,
+          pressure_mb: 1027,
+          wind_kph: 6.1,
+          condition: {
+            text: "clear",
+          },
         },
+        forecast: {
+          forecastday: [
+            {
+              date: new Date().toISOString().split("T")[0],
+              day: {
+                avgtemp_c: 9.2,
+                maxtemp_c: 15,
+                mintemp_c: 7,
+                avghumidity: 93,
+                maxwind_kph: 6.1,
+                condition: {
+                  text: "clear",
+                },
+              },
+            },
+          ],
+        },
+      }),
   })
-  }),
-)as jest.Mock;
- 
+) as jest.Mock;
 describe('yo como usuario quiero ver el nombre de la ciudad para asegurarme que los datos climaticos estan ligados con la zona ', () => {
   test('el primer dato a visualizar en la aplicacion  debe ser el nombre de la ciudad: Quilmes ', async () => {
     const resultado= renderHook(

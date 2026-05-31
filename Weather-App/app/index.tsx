@@ -1,32 +1,14 @@
-import React from 'react';
-import LayoutParaLaPantallaPrincipalDelClima from '@/src/clima/layout';
-import NavEntreDias from '@/src/dias';
-import { useFechas as usarFechas } from '@/src/dias/hoocks';
-import usarLocalizacion from '@/src/localizacion';
-import { View, Text, Image } from 'react-native';
-import usarPronosticoClimatico from '@/src/clima/hoocks';
-const PantallaInicialParaElClima = () => {
-  const { fechas } = usarFechas();
-  const { coordenadas, coordenadasComoTexto, coordenadasDisponibles } = usarLocalizacion();
+import React from "react";
+import { View, Text, Image } from "react-native";
 
-  return (
-    <LayoutParaLaPantallaPrincipalDelClima>
-      <NavEntreDias {...fechas()} />
-      <View>
-        {coordenadasDisponibles() && (
-          <TarjetaParaDatosClimaticos
-            fecha={fechas().hoy}
-            latitud={coordenadas().latitud}
-            longitud={coordenadas().longitud}
-            clave_de_api="tukey"
-          />
-        )}
-      </View>
-    </LayoutParaLaPantallaPrincipalDelClima>
-  );
-};
+import { useFechas as usarFechas } from "@/src/dias/hoocks";
+import NavEntreDias from "@/src/dias/index";
+import usarLocalizacion from "@/src/localizacion";
+import usarPronosticoClimatico from "@/src/clima/hoocks";
 
-const TarjetaParaDatosClimaticos = (props: Parameters<typeof usarPronosticoClimatico>[0]) => {
+const TarjetaParaDatosClimaticos = (
+  props: Parameters<typeof usarPronosticoClimatico>[0]
+) => {
   const {
     ciudad,
     temperaturaEnGradoCelsius,
@@ -34,78 +16,290 @@ const TarjetaParaDatosClimaticos = (props: Parameters<typeof usarPronosticoClima
     velocidadDeVientoEnKilometroPorhora,
     presionEnHectopascales,
     condicionClimatica,
-    consultaExitosa,
     temperaturaMinimaEnGradoCelsius,
     temperaturaMaximaEnGradoCelsius,
     estaPendiente,
     huboUnProblema,
+    descripcionDelProblema,
   } = usarPronosticoClimatico(props);
 
-  if (estaPendiente())
+  if (estaPendiente()) {
     return (
-      <View>
-        <Text>Cargando</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text>Cargando pronóstico...</Text>
       </View>
     );
+  }
 
-  if (huboUnProblema())
+  if (huboUnProblema()) {
     return (
-      <View>
-        <Text>Upss</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 20,
+        }}
+      >
+        <Text>Error: {descripcionDelProblema()}</Text>
       </View>
     );
-
-  console.log(ciudad());
+  }
 
   const obtenerIcono = () => {
     const condicion = condicionClimatica().toLowerCase();
 
-    if (condicion.includes('sun') || condicion.includes('clear')) {
-      return require('@/imagenes/soleado.png');
-    }
-    if (condicion.includes('rain')) {
-      return require('@/imagenes/lluvioso.png');
-    }
-    if (condicion.includes('cloud')) {
-      return require('@/imagenes/nublado.png');
+    if (
+      condicion.includes("sun") ||
+      condicion.includes("clear") ||
+      condicion.includes("soleado")
+    ) {
+      return require("../imagenes/soleado.png");
     }
 
-    return require('@/imagenes/nublado.png');
+    if (
+      condicion.includes("rain") ||
+      condicion.includes("lluv")
+    ) {
+      return require("../imagenes/lluvioso.png");
+    }
+
+    return require("../imagenes/nublado.png");
   };
-  console.log(humedadEnPorcentaje());
 
   return (
-    <View className="flex-1 items-center justify-center px-6">
-      <View>
-        <Text className="mb-6 items-center text-base tracking-[4px] text-gray-400">
-          {ciudad().toUpperCase()}
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        paddingHorizontal: 24,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 40,
+          fontWeight: "900",
+          letterSpacing: 2,
+          marginTop: 5,
+          marginBottom: 5,
+        }}
+      >
+        {ciudad().toUpperCase()}
+      </Text>
+
+      <Image
+        source={obtenerIcono()}
+        resizeMode="contain"
+        style={{
+          width: 360,
+          height: 360,
+          marginBottom: -10,
+        }}
+      />
+
+      <View
+        style={{
+          width: "100%",
+          paddingLeft: 25,
+          marginTop: -20,
+          marginBottom: 10,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 10,
+            color: "#999",
+            letterSpacing: 1,
+            fontWeight: "700",
+          }}
+        >
+          HUM
         </Text>
-        <Image source={obtenerIcono()} className="mb-6 h-44 w-44" resizeMode="contain" />
-        <View className="items-baseline">
-          <Text className="text-xs text-gray-400">HUM</Text>
-          <Text className="text-lg">{humedadEnPorcentaje()}%</Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+            marginBottom: 10,
+          }}
+        >
+          {humedadEnPorcentaje()}%
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 10,
+            color: "#999",
+            letterSpacing: 1,
+            fontWeight: "700",
+          }}
+        >
+          PRESS
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+            marginBottom: 10,
+          }}
+        >
+          {presionEnHectopascales()} hPa
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 10,
+            color: "#999",
+            letterSpacing: 1,
+            fontWeight: "700",
+          }}
+        >
+          WIND
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+          }}
+        >
+          {velocidadDeVientoEnKilometroPorhora()} km/h
+        </Text>
+      </View>
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          width: "100%",
+          marginTop: -10,
+          marginBottom: 10,
+        }}
+      >
+        <View
+          style={{
+            alignItems: "center",
+            marginRight: 20,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 36,
+              fontWeight: "700",
+            }}
+          >
+            {temperaturaMinimaEnGradoCelsius()}°
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 11,
+              color: "#888",
+            }}
+          >
+            MIN
+          </Text>
         </View>
 
-        <View className="items-baseline">
-          <Text className="text-xs text-gray-400">WIND</Text>
-          <Text className="text-lg">{velocidadDeVientoEnKilometroPorhora()} km/h</Text>
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 70,
+              fontWeight: "900",
+              lineHeight: 100,
+            }}
+          >
+            {temperaturaEnGradoCelsius()}°
+          </Text>
         </View>
 
-        <View className="items-baseline">
-          <Text className="text-xs text-gray-400">PRESS</Text>
-          <Text className="text-lg">{presionEnHectopascales()} hPa</Text>
-        </View>
+        <View
+          style={{
+            alignItems: "center",
+            marginLeft: 30,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 36,
+              fontWeight: "700",
+            }}
+          >
+            {temperaturaMaximaEnGradoCelsius()}°
+          </Text>
 
-        <View className="mb-6 flex-row items-center">
-          <Text className="text-7xl font-bold">{temperaturaMinimaEnGradoCelsius()}</Text>
-          <Text className="mb-2 text-3xl">°</Text>
-          <Text className="text-7xl font-bold">{temperaturaEnGradoCelsius()}</Text>
-          <Text className="mb-2 text-3xl">°</Text>
-          <Text className="text-7xl font-bold">{temperaturaMaximaEnGradoCelsius()}</Text>
-          <Text className="mb-2 text-3xl">°</Text>
+          <Text
+            style={{
+              fontSize: 11,
+              color: "#888",
+            }}
+          >
+            MAX
+          </Text>
         </View>
       </View>
     </View>
   );
 };
+
+const PantallaInicialParaElClima = () => {
+  const {
+    fechas,
+    irAlDiaAnterior,
+    irAlDiaSiguiente,
+  } = usarFechas();
+
+  const {
+    coordenadas,
+    coordenadasDisponibles,
+  } = usarLocalizacion();
+
+  const coords = coordenadas();
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+        paddingTop: 15,
+      }}
+    >
+      <NavEntreDias
+        hoy={fechas().hoy}
+        ayer={fechas().ayer}
+        maniana={fechas().maniana}
+        onAnterior={irAlDiaAnterior}
+        onSiguiente={irAlDiaSiguiente}
+      />
+
+      {!coordenadasDisponibles() ? (
+        <Text style={{ padding: 20 }}>
+          Obteniendo ubicación...
+        </Text>
+      ) : !coords ? (
+        <Text style={{ padding: 20 }}>
+          No se pudo obtener la ubicación
+        </Text>
+      ) : (
+        <TarjetaParaDatosClimaticos
+          fecha={fechas().hoy}
+          latitud={coords.latitud}
+          longitud={coords.longitud}
+          clave_de_api="a97cc5da0f164cca9b0213528262803"
+        />
+      )}
+    </View>
+  );
+};
+
 export default PantallaInicialParaElClima;

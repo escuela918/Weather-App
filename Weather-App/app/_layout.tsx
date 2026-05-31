@@ -1,20 +1,15 @@
-import '@/global.css';
+import { Stack } from "expo-router";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 
-import ProveedorDeTemasClaroOscuro from '@/src/tema-claro-oscuro';
-import { StackPrincipal } from '@/src/stacks';
-import FeedbacksDeErrorPorDefecto from '@/src/feedbacks';
-import { PortalHost } from '@rn-primitives/portal';
-import ProveedorDeDatosClimatico from '@/src/clima/proveedores';
-
-export const ErrorBoundary = FeedbacksDeErrorPorDefecto;
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   return (
-    <ProveedorDeTemasClaroOscuro>
-      <ProveedorDeDatosClimatico>
-        <StackPrincipal />
-        <PortalHost/>
-      </ProveedorDeDatosClimatico>
-    </ProveedorDeTemasClaroOscuro>
+    <QueryClientProvider client={queryClient}>
+      <Stack />
+    </QueryClientProvider>
   );
 }

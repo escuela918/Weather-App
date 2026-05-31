@@ -1,27 +1,89 @@
-import { Icon } from "@/components/ui/icon"
-import { ChevronLeft, ChevronRight } from "lucide-react-native"
-import { Text } from "@/components/ui/text"
-import { View } from "react-native"
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { Pressable, Text, View } from "react-native";
 
-const NavEntreDias = ({hoy,maniana,ayer}:{hoy:Date; maniana:Date; ayer:Date}) => {
-  return (
-    <View className="flex-row justify-between">
-        <View className="flex-row items-center space-x-2">
-            <Icon as ={ChevronLeft}/>
-            <Text>{formatear_fechas(ayer)}</Text>
-        </View>
-        <View>
-            <Text className="txt-xl font-bold">{formatear_fechas(hoy)}</Text>
-        </View>
-        <View className="flex-row items-center space-x-2">
-            <Icon as={ChevronRight}/>
-            <Text>{formatear_fechas(maniana)}</Text>
-        </View>
-    </View>
-  )
-}
-const formatear_fechas= (fecha:Date)=>{
-    const fechas_con_formato= fecha.toLocaleString('es-AR',{day:'2-digit',month:'2-digit'});
-    return fechas_con_formato.replace(`/${fecha.getFullYear()}`,``)
+type Props = {
+  hoy: Date;
+  maniana: Date;
+  ayer: Date;
+  onAnterior: () => void;
+  onSiguiente: () => void;
 };
-export default NavEntreDias
+
+const NavEntreDias = ({
+  hoy,
+  maniana,
+  ayer,
+  onAnterior,
+  onSiguiente,
+}: Props) => {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 24,
+        marginBottom: 20,
+      }}
+    >
+      <Pressable
+        onPress={onAnterior}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <ChevronLeft size={14} color="#BDBDBD" />
+
+        <Text
+          style={{
+            fontSize: 12,
+            color: "#BDBDBD",
+            marginLeft: 4,
+          }}
+        >
+          {formatearFecha(ayer)}
+        </Text>
+      </Pressable>
+
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: "800",
+          color: "#111",
+        }}
+      >
+        {formatearFecha(hoy)}
+      </Text>
+
+      <Pressable
+        onPress={onSiguiente}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 12,
+            color: "#BDBDBD",
+            marginRight: 4,
+          }}
+        >
+          {formatearFecha(maniana)}
+        </Text>
+
+        <ChevronRight size={14} color="#BDBDBD" />
+      </Pressable>
+    </View>
+  );
+};
+
+const formatearFecha = (fecha: Date) => {
+  return fecha.toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "numeric",
+  });
+};
+
+export default NavEntreDias;
